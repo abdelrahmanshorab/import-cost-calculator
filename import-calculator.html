@@ -241,6 +241,15 @@
             font-weight: bold;
         }
         
+        .total-per-ton {
+            border-right-color: #ff6b6b !important;
+        }
+        
+        .total-per-ton .item-result-value {
+            color: #ff6b6b;
+            font-size: 1.4em;
+        }
+        
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -324,7 +333,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚜 نظام حساب تكاليف الاستيراد</h1>
+        <h1>🚜 نظام حساب ت��اليف الاستيراد</h1>
         <p class="subtitle">Import Cost Calculator System</p>
         
         <!-- Settings Section -->
@@ -346,6 +355,25 @@
                 <div class="form-group">
                     <label>وزن الجرار الواحد (كجم)</label>
                     <input type="number" id="tractoWeight" value="26125" step="0.01" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Expenses Section -->
+        <div class="settings-section">
+            <div class="settings-title">💰 المصروفات الإضافية</div>
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label>المصروفات الإضافية 1 (جنيه)</label>
+                    <input type="number" id="expense1" value="0" step="0.01" min="0" placeholder="مثال: رسوم التوثيق">
+                </div>
+                <div class="form-group">
+                    <label>المصروفات الإضافية 2 (جنيه)</label>
+                    <input type="number" id="expense2" value="0" step="0.01" min="0" placeholder="مثال: رسوم التأمين">
+                </div>
+                <div class="form-group">
+                    <label>المصروفات الإضافية 3 (جنيه)</label>
+                    <input type="number" id="expense3" value="0" step="0.01" min="0" placeholder="مثال: رسوم أخرى">
                 </div>
             </div>
         </div>
@@ -372,6 +400,10 @@
                 <div class="result-card">
                     <div class="result-label">إجمالي التخليص الجمركي (جنيه)</div>
                     <div class="result-value" id="totalClearance">0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">إجمالي المصروفات الإضافية (جنيه)</div>
+                    <div class="result-value" id="totalAdditionalExpenses">0</div>
                 </div>
                 <div class="result-card">
                     <div class="result-label">التكلفة الكلية (جنيه)</div>
@@ -459,6 +491,10 @@
             const transportCost = parseFloat(document.getElementById('transportCost').value) || 0;
             const customsClearance = parseFloat(document.getElementById('customsClearance').value) || 0;
             const tractoWeight = parseFloat(document.getElementById('tractoWeight').value) || 0;
+            const expense1 = parseFloat(document.getElementById('expense1').value) || 0;
+            const expense2 = parseFloat(document.getElementById('expense2').value) || 0;
+            const expense3 = parseFloat(document.getElementById('expense3').value) || 0;
+            const totalAdditionalExpenses = expense1 + expense2 + expense3;
             
             let totalPurchase = 0;
             let totalTransport = 0;
@@ -470,7 +506,11 @@
                 const purchaseCost = item.price * weightInTons;
                 const transportCostItem = transportCost * weightInTons;
                 const clearanceCostItem = customsClearance * weightInTons;
-                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem;
+                
+                // إجمالي التكلفة للطن (بعد كل المصروفات)
+                const costPerTonUSD = item.price + transportCost;
+                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + (totalAdditionalExpenses / Math.max(items.length, 1));
+                const totalItemCost = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + (totalAdditionalExpenses / Math.max(items.length, 1));
                 
                 totalPurchase += purchaseCost;
                 totalTransport += transportCostItem;
@@ -482,16 +522,18 @@
                     purchaseCost: purchaseCost.toFixed(2),
                     transportCostItem: transportCostItem.toFixed(2),
                     clearanceCostItem: clearanceCostItem.toFixed(0),
-                    totalItem: totalItem.toFixed(2)
+                    costPerTonEGP: costPerTonEGP.toFixed(2),
+                    totalItem: totalItemCost.toFixed(2)
                 });
             });
             
-            const grandTotal = (totalPurchase + totalTransport) * dollarRate + totalClearance;
+            const grandTotal = (totalPurchase + totalTransport) * dollarRate + totalClearance + totalAdditionalExpenses;
             
             // Update summary
             document.getElementById('totalPurchase').textContent = totalPurchase.toFixed(2);
             document.getElementById('totalTransport').textContent = totalTransport.toFixed(2);
             document.getElementById('totalClearance').textContent = totalClearance.toFixed(0);
+            document.getElementById('totalAdditionalExpenses').textContent = totalAdditionalExpenses.toFixed(2);
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
             
             // Update item results
@@ -516,6 +558,10 @@
                             <div class="item-result-label">التخليص الجمركي (جنيه)</div>
                             <div class="item-result-value">ج.م ${result.clearanceCostItem}</div>
                         </div>
+                        <div class="item-result-item total-per-ton">
+                            <div class="item-result-label">إجمالي التكلفة للطن (جنيه)</div>
+                            <div class="item-result-value">ج.م ${result.costPerTonEGP}</div>
+                        </div>
                         <div class="item-result-item" style="border-right-color: #ff6b6b;">
                             <div class="item-result-label">الإجمالي (جنيه)</div>
                             <div class="item-result-value" style="color: #ff6b6b;">ج.م ${result.totalItem}</div>
@@ -530,6 +576,10 @@
             const transportCost = parseFloat(document.getElementById('transportCost').value) || 0;
             const customsClearance = parseFloat(document.getElementById('customsClearance').value) || 0;
             const tractoWeight = parseFloat(document.getElementById('tractoWeight').value) || 0;
+            const expense1 = parseFloat(document.getElementById('expense1').value) || 0;
+            const expense2 = parseFloat(document.getElementById('expense2').value) || 0;
+            const expense3 = parseFloat(document.getElementById('expense3').value) || 0;
+            const totalAdditionalExpenses = expense1 + expense2 + expense3;
             
             let csv = 'نظام حساب تكاليف الاستيراد\n\n';
             csv += 'الإعدادات العامة\n';
@@ -538,17 +588,25 @@
             csv += `التخليص الجمركي لكل طن (جنيه),${customsClearance}\n`;
             csv += `وزن الجرار الواحد (كجم),${tractoWeight}\n\n`;
             
+            csv += 'المصروفات الإضافية\n';
+            csv += `المصروفات الإضافية 1 (جنيه),${expense1}\n`;
+            csv += `المصروفات الإضافية 2 (جنيه),${expense2}\n`;
+            csv += `المصروفات الإضافية 3 (جنيه),${expense3}\n`;
+            csv += `إجمالي المصروفات الإضافية,${totalAdditionalExpenses}\n\n`;
+            
             csv += 'الأصناف المستوردة\n';
-            csv += 'اسم الصنف,السعر لكل طن (دولار),العدد (جرار),الوزن الإجمالي (طن),تكلفة الشراء (دولار),تكلفة النقل (دولار),التخليص الجمركي (جنيه),الإجمالي (جنيه)\n';
+            csv += 'اسم الصنف,السعر لكل طن (دولار),العدد (جرار),الوزن الإجمالي (طن),تكلفة الشراء (دولار),تكلفة النقل (دولار),التخليص الجمركي (جنيه),إجمالي التكلفة للطن (جنيه),الإجمالي (جنيه)\n';
             
             items.forEach(item => {
                 const weightInTons = (item.quantity * tractoWeight) / 1000;
                 const purchaseCost = item.price * weightInTons;
                 const transportCostItem = transportCost * weightInTons;
                 const clearanceCostItem = customsClearance * weightInTons;
-                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem;
+                const costPerTonUSD = item.price + transportCost;
+                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + (totalAdditionalExpenses / Math.max(items.length, 1));
+                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + (totalAdditionalExpenses / Math.max(items.length, 1));
                 
-                csv += `${item.name},${item.price},${item.quantity},${weightInTons.toFixed(3)},${purchaseCost.toFixed(2)},${transportCostItem.toFixed(2)},${clearanceCostItem.toFixed(0)},${totalItem.toFixed(2)}\n`;
+                csv += `${item.name},${item.price},${item.quantity},${weightInTons.toFixed(3)},${purchaseCost.toFixed(2)},${transportCostItem.toFixed(2)},${clearanceCostItem.toFixed(0)},${costPerTonEGP.toFixed(2)},${totalItem.toFixed(2)}\n`;
             });
             
             const link = document.createElement('a');
@@ -564,6 +622,9 @@
                 document.getElementById('transportCost').value = '50';
                 document.getElementById('customsClearance').value = '9000';
                 document.getElementById('tractoWeight').value = '26125';
+                document.getElementById('expense1').value = '0';
+                document.getElementById('expense2').value = '0';
+                document.getElementById('expense3').value = '0';
                 renderItems();
                 calculateAll();
             }
@@ -577,6 +638,9 @@
         document.getElementById('transportCost').addEventListener('change', calculateAll);
         document.getElementById('customsClearance').addEventListener('change', calculateAll);
         document.getElementById('tractoWeight').addEventListener('change', calculateAll);
+        document.getElementById('expense1').addEventListener('change', calculateAll);
+        document.getElementById('expense2').addEventListener('change', calculateAll);
+        document.getElementById('expense3').addEventListener('change', calculateAll);
     </script>
 </body>
 </html>
