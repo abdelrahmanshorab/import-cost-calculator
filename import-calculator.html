@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام حساب تكاليف الاستيراد</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .settings-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .settings-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        input[type="number"], input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .items-section {
+            margin-bottom: 30px;
+        }
+        
+        .items-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .item-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #764ba2;
+        }
+        
+        .item-header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .item-title {
+            font-size: 1.15em;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .btn-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-remove:hover {
+            background: #ff5252;
+        }
+        
+        .item-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn-add-item {
+            background: #51cf66;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-add-item:hover {
+            background: #40c057;
+        }
+        
+        .results-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 10px;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        .results-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .result-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .item-results {
+            margin-top: 30px;
+        }
+        
+        .item-result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item-result-title {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .item-result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .item-result-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-right: 3px solid #667eea;
+        }
+        
+        .item-result-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .item-result-value {
+            color: #333;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-export {
+            background: #4c6ef5;
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: #364fc7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 110, 245, 0.3);
+        }
+        
+        .btn-print {
+            background: #15aabf;
+            color: white;
+        }
+        
+        .btn-print:hover {
+            background: #0b7285;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(21, 170, 191, 0.3);
+        }
+        
+        .btn-reset {
+            background: #a6adb4;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background: #868e96;
+            transform: translateY(-2px);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .action-buttons, .btn-add-item, .btn-remove {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .settings-grid, .item-grid, .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚜 نظام حساب تكاليف الاستيراد</h1>
+        <p class="subtitle">Import Cost Calculator System</p>
+        
+        <!-- Settings Section -->
+        <div class="settings-section">
+            <div class="settings-title">⚙️ الإعدادات العامة</div>
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label>سعر الدولار (جنيه مصري)</label>
+                    <input type="number" id="dollarRate" value="50" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label>تكلفة النقل لكل طن (دولار)</label>
+                    <input type="number" id="transportCost" value="50" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label>التخليص الجمركي لكل طن (جنيه)</label>
+                    <input type="number" id="customsClearance" value="9000" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label>وزن الجرار الواحد (كجم)</label>
+                    <input type="number" id="tractoWeight" value="26125" step="0.01" min="0">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items Section -->
+        <div class="items-section">
+            <div class="items-title">📦 الأصناف المستوردة</div>
+            <div id="itemsContainer"></div>
+            <button class="btn-add-item" onclick="addItem()">+ إضافة صنف جديد</button>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="results-title">📊 النتائج النهائية</div>
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-label">إجمالي تكلفة المشتريات (دولار)</div>
+                    <div class="result-value" id="totalPurchase">0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">إجمالي تكلفة النقل (دولار)</div>
+                    <div class="result-value" id="totalTransport">0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">إجمالي التخليص الجمركي (جنيه)</div>
+                    <div class="result-value" id="totalClearance">0</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">التكلفة الكلية (جنيه)</div>
+                    <div class="result-value" id="grandTotal">0</div>
+                </div>
+            </div>
+            
+            <div class="item-results" id="itemResults"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-export" onclick="exportToExcel()">📥 تحميل Excel</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ طباعة</button>
+            <button class="btn btn-reset" onclick="resetForm()">🔄 إعادة تعيين</button>
+        </div>
+    </div>
+    
+    <script>
+        let items = [];
+        
+        // Initialize with sample items
+        function initializeSampleItems() {
+            items = [
+                { id: 1, name: 'CC 700', price: 1290, quantity: 3 },
+                { id: 2, name: 'CC 160', price: 1290, quantity: 3 },
+                { id: 3, name: 'M50-0026', price: 1210, quantity: 3 },
+                { id: 4, name: '952', price: 1240, quantity: 3 }
+            ];
+            renderItems();
+            calculateAll();
+        }
+        
+        function addItem() {
+            const newId = items.length > 0 ? Math.max(...items.map(i => i.id)) + 1 : 1;
+            items.push({ id: newId, name: '', price: 0, quantity: 0 });
+            renderItems();
+            calculateAll();
+        }
+        
+        function removeItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderItems();
+            calculateAll();
+        }
+        
+        function updateItem(id, field, value) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item[field] = field === 'name' ? value : parseFloat(value) || 0;
+                calculateAll();
+            }
+        }
+        
+        function renderItems() {
+            const container = document.getElementById('itemsContainer');
+            container.innerHTML = items.map(item => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-title">الصنف #${item.id}</div>
+                        <button class="btn-remove" onclick="removeItem(${item.id})">حذف</button>
+                    </div>
+                    <div class="item-grid">
+                        <div class="form-group">
+                            <label>اسم الصنف</label>
+                            <input type="text" value="${item.name}" 
+                                onchange="updateItem(${item.id}, 'name', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>السعر لكل طن (دولار)</label>
+                            <input type="number" value="${item.price}" step="0.01" min="0"
+                                onchange="updateItem(${item.id}, 'price', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>العدد (جرار)</label>
+                            <input type="number" value="${item.quantity}" step="1" min="0"
+                                onchange="updateItem(${item.id}, 'quantity', this.value)">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function calculateAll() {
+            const dollarRate = parseFloat(document.getElementById('dollarRate').value) || 0;
+            const transportCost = parseFloat(document.getElementById('transportCost').value) || 0;
+            const customsClearance = parseFloat(document.getElementById('customsClearance').value) || 0;
+            const tractoWeight = parseFloat(document.getElementById('tractoWeight').value) || 0;
+            
+            let totalPurchase = 0;
+            let totalTransport = 0;
+            let totalClearance = 0;
+            const itemResults = [];
+            
+            items.forEach(item => {
+                const weightInTons = (item.quantity * tractoWeight) / 1000;
+                const purchaseCost = item.price * weightInTons;
+                const transportCostItem = transportCost * weightInTons;
+                const clearanceCostItem = customsClearance * weightInTons;
+                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem;
+                
+                totalPurchase += purchaseCost;
+                totalTransport += transportCostItem;
+                totalClearance += clearanceCostItem;
+                
+                itemResults.push({
+                    name: item.name || `الصنف #${item.id}`,
+                    weightInTons: weightInTons.toFixed(3),
+                    purchaseCost: purchaseCost.toFixed(2),
+                    transportCostItem: transportCostItem.toFixed(2),
+                    clearanceCostItem: clearanceCostItem.toFixed(0),
+                    totalItem: totalItem.toFixed(2)
+                });
+            });
+            
+            const grandTotal = (totalPurchase + totalTransport) * dollarRate + totalClearance;
+            
+            // Update summary
+            document.getElementById('totalPurchase').textContent = totalPurchase.toFixed(2);
+            document.getElementById('totalTransport').textContent = totalTransport.toFixed(2);
+            document.getElementById('totalClearance').textContent = totalClearance.toFixed(0);
+            document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+            
+            // Update item results
+            const itemResultsDiv = document.getElementById('itemResults');
+            itemResultsDiv.innerHTML = itemResults.map((result, index) => `
+                <div class="item-result-card">
+                    <div class="item-result-title">📋 ${result.name}</div>
+                    <div class="item-result-grid">
+                        <div class="item-result-item">
+                            <div class="item-result-label">الوزن الإجمالي</div>
+                            <div class="item-result-value">${result.weightInTons} طن</div>
+                        </div>
+                        <div class="item-result-item">
+                            <div class="item-result-label">تكلفة الشراء (دولار)</div>
+                            <div class="item-result-value">$${result.purchaseCost}</div>
+                        </div>
+                        <div class="item-result-item">
+                            <div class="item-result-label">تكلفة النقل (دولار)</div>
+                            <div class="item-result-value">$${result.transportCostItem}</div>
+                        </div>
+                        <div class="item-result-item">
+                            <div class="item-result-label">التخليص الجمركي (جنيه)</div>
+                            <div class="item-result-value">ج.م ${result.clearanceCostItem}</div>
+                        </div>
+                        <div class="item-result-item" style="border-right-color: #ff6b6b;">
+                            <div class="item-result-label">الإجمالي (جنيه)</div>
+                            <div class="item-result-value" style="color: #ff6b6b;">ج.م ${result.totalItem}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function exportToExcel() {
+            const dollarRate = parseFloat(document.getElementById('dollarRate').value) || 0;
+            const transportCost = parseFloat(document.getElementById('transportCost').value) || 0;
+            const customsClearance = parseFloat(document.getElementById('customsClearance').value) || 0;
+            const tractoWeight = parseFloat(document.getElementById('tractoWeight').value) || 0;
+            
+            let csv = 'نظام حساب تكاليف الاستيراد\n\n';
+            csv += 'الإعدادات العامة\n';
+            csv += `سعر الدولار (جنيه مصري),${dollarRate}\n`;
+            csv += `تكلفة النقل لكل طن (دولار),${transportCost}\n`;
+            csv += `التخليص الجمركي لكل طن (جنيه),${customsClearance}\n`;
+            csv += `وزن الجرار الواحد (كجم),${tractoWeight}\n\n`;
+            
+            csv += 'الأصناف المستوردة\n';
+            csv += 'اسم الصنف,السعر لكل طن (دولار),العدد (جرار),الوزن الإجمالي (طن),تكلفة الشراء (دولار),تكلفة النقل (دولار),التخليص الجمركي (جنيه),الإجمالي (جنيه)\n';
+            
+            items.forEach(item => {
+                const weightInTons = (item.quantity * tractoWeight) / 1000;
+                const purchaseCost = item.price * weightInTons;
+                const transportCostItem = transportCost * weightInTons;
+                const clearanceCostItem = customsClearance * weightInTons;
+                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem;
+                
+                csv += `${item.name},${item.price},${item.quantity},${weightInTons.toFixed(3)},${purchaseCost.toFixed(2)},${transportCostItem.toFixed(2)},${clearanceCostItem.toFixed(0)},${totalItem.toFixed(2)}\n`;
+            });
+            
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            link.download = 'import-costs-' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+        }
+        
+        function resetForm() {
+            if (confirm('هل تريد حقاً إعادة تعيين جميع البيانات؟')) {
+                items = [];
+                document.getElementById('dollarRate').value = '50';
+                document.getElementById('transportCost').value = '50';
+                document.getElementById('customsClearance').value = '9000';
+                document.getElementById('tractoWeight').value = '26125';
+                renderItems();
+                calculateAll();
+            }
+        }
+        
+        // Initialize on page load
+        window.addEventListener('load', initializeSampleItems);
+        
+        // Add event listeners for settings
+        document.getElementById('dollarRate').addEventListener('change', calculateAll);
+        document.getElementById('transportCost').addEventListener('change', calculateAll);
+        document.getElementById('customsClearance').addEventListener('change', calculateAll);
+        document.getElementById('tractoWeight').addEventListener('change', calculateAll);
+    </script>
+</body>
+</html>
