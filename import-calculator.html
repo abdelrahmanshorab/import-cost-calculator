@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام حساب تكاليف الاستيراد</title>
+    <title>نظام حساب تكاليف الاستيراد المتقدم</title>
     <style>
         * {
             margin: 0;
@@ -12,53 +12,72 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cairo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
             padding: 40px;
         }
         
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
+        .section {
             margin-bottom: 40px;
-            font-size: 1.1em;
-        }
-        
-        .settings-section {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 5px solid #667eea;
+            padding: 30px;
+            border-radius: 15px;
+            border-right: 5px solid #667eea;
         }
         
-        .settings-title {
-            font-size: 1.3em;
+        .section-title {
+            font-size: 1.4em;
             color: #333;
-            margin-bottom: 20px;
-            font-weight: bold;
+            margin-bottom: 25px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .settings-grid {
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+        
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
         
@@ -67,201 +86,214 @@
             flex-direction: column;
         }
         
-        label {
+        .form-group label {
             font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 0.95em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        input[type="number"], input[type="text"] {
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+        .form-group .unit {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 400;
+        }
+        
+        .form-group input {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background: white;
         }
         
-        input[type="number"]:focus, input[type="text"]:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+            background: #f0f4ff;
         }
         
-        .items-section {
+        .form-group input::placeholder {
+            color: #bbb;
+        }
+        
+        .items-container {
             margin-bottom: 30px;
         }
         
-        .items-title {
-            font-size: 1.3em;
-            color: #333;
+        .item-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
             margin-bottom: 20px;
-            font-weight: bold;
+            border: 2px solid #e8e8e8;
+            transition: all 0.3s;
         }
         
-        .item-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 5px solid #764ba2;
+        .item-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
         }
         
         .item-header {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
-        .item-title {
-            font-size: 1.15em;
-            color: #333;
-            font-weight: 600;
+        .item-number {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
         }
         
         .btn-remove {
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            font-size: 0.9em;
         }
         
         .btn-remove:hover {
             background: #ff5252;
-        }
-        
-        .item-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
         }
         
         .btn-add-item {
             background: #51cf66;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 30px;
+            border-radius: 10px;
             font-size: 1em;
             cursor: pointer;
             font-weight: 600;
-            transition: background 0.3s;
+            transition: all 0.3s;
             margin-top: 20px;
         }
         
         .btn-add-item:hover {
             background: #40c057;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.3);
         }
         
         .results-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px;
-            border-radius: 10px;
             color: white;
-            margin-top: 30px;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
         }
         
         .results-title {
-            font-size: 1.3em;
-            margin-bottom: 20px;
-            font-weight: bold;
+            font-size: 1.4em;
+            margin-bottom: 30px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .results-grid {
+        .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
+            margin-bottom: 30px;
         }
         
-        .result-card {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .summary-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
         
-        .result-label {
-            font-size: 0.9em;
+        .summary-label {
+            font-size: 0.95em;
             opacity: 0.9;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
         
-        .result-value {
-            font-size: 1.8em;
-            font-weight: bold;
+        .summary-value {
+            font-size: 2em;
+            font-weight: 700;
         }
         
-        .item-results {
+        .items-details {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
             margin-top: 30px;
         }
         
-        .item-result-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .item-result-title {
-            color: #667eea;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        
-        .item-result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .item-result-item {
+        .items-table thead {
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-right: 3px solid #667eea;
+            border-bottom: 2px solid #e0e0e0;
         }
         
-        .item-result-label {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-        
-        .item-result-value {
+        .items-table th {
+            padding: 18px;
+            text-align: right;
+            font-weight: 700;
             color: #333;
-            font-size: 1.2em;
-            font-weight: bold;
+            font-size: 0.95em;
         }
         
-        .total-per-ton {
-            border-right-color: #ff6b6b !important;
+        .items-table td {
+            padding: 18px;
+            border-bottom: 1px solid #e8e8e8;
+            color: #666;
         }
         
-        .total-per-ton .item-result-value {
+        .items-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .items-table .value {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .items-table .total {
             color: #ff6b6b;
-            font-size: 1.4em;
+            font-weight: 700;
+            font-size: 1.1em;
         }
         
         .action-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 30px;
+            gap: 15px;
+            margin-top: 40px;
             justify-content: center;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
             cursor: pointer;
             font-weight: 600;
@@ -276,7 +308,7 @@
         .btn-export:hover {
             background: #364fc7;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 110, 245, 0.3);
+            box-shadow: 0 6px 20px rgba(76, 110, 245, 0.4);
         }
         
         .btn-print {
@@ -287,7 +319,7 @@
         .btn-print:hover {
             background: #0b7285;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(21, 170, 191, 0.3);
+            box-shadow: 0 6px 20px rgba(21, 170, 191, 0.4);
         }
         
         .btn-reset {
@@ -298,6 +330,16 @@
         .btn-reset:hover {
             background: #868e96;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(166, 173, 180, 0.4);
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #e0e0e0;
         }
         
         @media print {
@@ -311,113 +353,156 @@
                 border-radius: 0;
             }
             
-            .action-buttons, .btn-add-item, .btn-remove {
+            .action-buttons, .btn-add-item, .btn-remove, .footer {
                 display: none;
             }
         }
         
         @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
+            .header h1 {
                 font-size: 1.8em;
             }
             
-            .settings-grid, .item-grid, .results-grid {
+            .content {
+                padding: 20px;
+            }
+            
+            .grid, .summary-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .items-table {
+                font-size: 0.9em;
+            }
+            
+            .items-table th, .items-table td {
+                padding: 10px;
+            }
+        }
+        
+        .expense-label {
+            color: #764ba2;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚜 نظام حساب ت��اليف الاستيراد</h1>
-        <p class="subtitle">Import Cost Calculator System</p>
+        <div class="header">
+            <h1>🚜 نظام حساب تكاليف الاستيراد المتقدم</h1>
+            <p>Advanced Import Cost Calculator System</p>
+        </div>
         
-        <!-- Settings Section -->
-        <div class="settings-section">
-            <div class="settings-title">⚙️ الإعدادات العامة</div>
-            <div class="settings-grid">
-                <div class="form-group">
-                    <label>سعر الدولار (جنيه مصري)</label>
-                    <input type="number" id="dollarRate" value="50" step="0.01" min="0">
-                </div>
-                <div class="form-group">
-                    <label>تكلفة النقل لكل طن (دولار)</label>
-                    <input type="number" id="transportCost" value="50" step="0.01" min="0">
-                </div>
-                <div class="form-group">
-                    <label>التخليص الجمركي لكل طن (جنيه)</label>
-                    <input type="number" id="customsClearance" value="9000" step="0.01" min="0">
-                </div>
-                <div class="form-group">
-                    <label>وزن الجرار الواحد (كجم)</label>
-                    <input type="number" id="tractoWeight" value="26125" step="0.01" min="0">
+        <div class="content">
+            <!-- General Settings Section -->
+            <div class="section">
+                <div class="section-title">⚙️ الإعدادات الأساسية</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>سعر الدولار <span class="unit">(جنيه مصري)</span></label>
+                        <input type="number" id="dollarRate" value="50" step="0.01" min="0" placeholder="أدخل سعر الدولار">
+                    </div>
+                    <div class="form-group">
+                        <label>تكلفة النقل <span class="unit">(دولار/طن)</span></label>
+                        <input type="number" id="transportCost" value="50" step="0.01" min="0" placeholder="أدخل تكلفة النقل">
+                    </div>
+                    <div class="form-group">
+                        <label>التخليص الجمركي <span class="unit">(جنيه/طن)</span></label>
+                        <input type="number" id="customsClearance" value="9000" step="0.01" min="0" placeholder="أدخل التخليص الجمركي">
+                    </div>
+                    <div class="form-group">
+                        <label>وزن الوحدة <span class="unit">(كجم)</span></label>
+                        <input type="number" id="tractoWeight" value="26125" step="0.01" min="0" placeholder="أدخل وزن الجرار">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Additional Expenses Section -->
-        <div class="settings-section">
-            <div class="settings-title">💰 المصروفات الإضافية</div>
-            <div class="settings-grid">
-                <div class="form-group">
-                    <label>المصروفات الإضافية 1 (جنيه)</label>
-                    <input type="number" id="expense1" value="0" step="0.01" min="0" placeholder="مثال: رسوم التوثيق">
-                </div>
-                <div class="form-group">
-                    <label>المصروفات الإضافية 2 (جنيه)</label>
-                    <input type="number" id="expense2" value="0" step="0.01" min="0" placeholder="مثال: رسوم التأمين">
-                </div>
-                <div class="form-group">
-                    <label>المصروفات الإضافية 3 (جنيه)</label>
-                    <input type="number" id="expense3" value="0" step="0.01" min="0" placeholder="مثال: رسوم أخرى">
-                </div>
-            </div>
-        </div>
-        
-        <!-- Items Section -->
-        <div class="items-section">
-            <div class="items-title">📦 الأصناف المستوردة</div>
-            <div id="itemsContainer"></div>
-            <button class="btn-add-item" onclick="addItem()">+ إضافة صنف جديد</button>
-        </div>
-        
-        <!-- Results Section -->
-        <div class="results-section">
-            <div class="results-title">📊 النتائج النهائية</div>
-            <div class="results-grid">
-                <div class="result-card">
-                    <div class="result-label">إجمالي تكلفة المشتريات (دولار)</div>
-                    <div class="result-value" id="totalPurchase">0</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">إجمالي تكلفة النقل (دولار)</div>
-                    <div class="result-value" id="totalTransport">0</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">إجمالي التخليص الجمركي (جنيه)</div>
-                    <div class="result-value" id="totalClearance">0</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">إجمالي المصروفات الإضافية (جنيه)</div>
-                    <div class="result-value" id="totalAdditionalExpenses">0</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">التكلفة الكلية (جنيه)</div>
-                    <div class="result-value" id="grandTotal">0</div>
+            <!-- Additional Expenses Section -->
+            <div class="section">
+                <div class="section-title">💰 المصروفات الإضافية</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label><span class="expense-label">المصروفات 1</span> <span class="unit">(جنيه)</span></label>
+                        <input type="number" id="expense1" value="0" step="0.01" min="0" placeholder="مثال: رسوم التوثيق">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="expense-label">المصروفات 2</span> <span class="unit">(جنيه)</span></label>
+                        <input type="number" id="expense2" value="0" step="0.01" min="0" placeholder="مثال: رسوم التأمين">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="expense-label">المصروفات 3</span> <span class="unit">(جنيه)</span></label>
+                        <input type="number" id="expense3" value="0" step="0.01" min="0" placeholder="مثال: رسوم أخرى">
+                    </div>
                 </div>
             </div>
             
-            <div class="item-results" id="itemResults"></div>
+            <!-- Items Section -->
+            <div class="section">
+                <div class="section-title">📦 الأصناف المستوردة</div>
+                <div class="items-container" id="itemsContainer"></div>
+                <button class="btn-add-item" onclick="addItem()">➕ إضافة صنف جديد</button>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="results-title">📊 النتائج والملخص</div>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-label">تكلفة المشتريات</div>
+                        <div class="summary-value">$<span id="totalPurchase">0</span></div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">تكلفة النقل</div>
+                        <div class="summary-value">$<span id="totalTransport">0</span></div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">التخليص الجمركي</div>
+                        <div class="summary-value">ج.م <span id="totalClearance">0</span></div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">المصروفات الإضافية</div>
+                        <div class="summary-value">ج.م <span id="totalAdditionalExpenses">0</span></div>
+                    </div>
+                </div>
+                
+                <div class="items-table-wrapper">
+                    <table class="items-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>اسم الصنف</th>
+                                <th>الكمية (جرار)</th>
+                                <th>الوزن (طن)</th>
+                                <th>سعر الطن ($)</th>
+                                <th>الشراء ($)</th>
+                                <th>النقل ($)</th>
+                                <th>الجمارك (ج.م)</th>
+                                <th>سعر الطن (ج.م)</th>
+                                <th>الإجمالي (ج.م)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="summary-grid" style="margin-top: 30px;">
+                    <div class="summary-card" style="grid-column: 1 / -1; background: rgba(255, 107, 107, 0.2);">
+                        <div class="summary-label">التكلفة الإجمالية النهائية</div>
+                        <div class="summary-value" style="color: #ff6b6b;">ج.م <span id="grandTotal">0</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-export" onclick="exportToExcel()">📥 تحميل Excel</button>
+                <button class="btn btn-print" onclick="window.print()">🖨️ طباعة</button>
+                <button class="btn btn-reset" onclick="resetForm()">🔄 إعادة تعيين</button>
+            </div>
         </div>
         
-        <div class="action-buttons">
-            <button class="btn btn-export" onclick="exportToExcel()">📥 تحميل Excel</button>
-            <button class="btn btn-print" onclick="window.print()">🖨️ طباعة</button>
-            <button class="btn btn-reset" onclick="resetForm()">🔄 إعادة تعيين</button>
+        <div class="footer">
+            <p>© 2024 نظام حساب تكاليف الاستيراد | جميع الحقوق محفوظة</p>
         </div>
     </div>
     
@@ -459,27 +544,27 @@
         
         function renderItems() {
             const container = document.getElementById('itemsContainer');
-            container.innerHTML = items.map(item => `
+            container.innerHTML = items.map((item, index) => `
                 <div class="item-card">
                     <div class="item-header">
-                        <div class="item-title">الصنف #${item.id}</div>
-                        <button class="btn-remove" onclick="removeItem(${item.id})">حذف</button>
+                        <div class="item-number">الصنف #${index + 1}</div>
+                        <button class="btn-remove" onclick="removeItem(${item.id})">🗑️ حذف</button>
                     </div>
-                    <div class="item-grid">
+                    <div class="grid">
                         <div class="form-group">
                             <label>اسم الصنف</label>
                             <input type="text" value="${item.name}" 
-                                onchange="updateItem(${item.id}, 'name', this.value)">
+                                onchange="updateItem(${item.id}, 'name', this.value)" placeholder="أدخل اسم الصنف">
                         </div>
                         <div class="form-group">
-                            <label>السعر لكل طن (دولار)</label>
+                            <label>السعر <span class="unit">(دولار/طن)</span></label>
                             <input type="number" value="${item.price}" step="0.01" min="0"
-                                onchange="updateItem(${item.id}, 'price', this.value)">
+                                onchange="updateItem(${item.id}, 'price', this.value)" placeholder="أدخل السعر">
                         </div>
                         <div class="form-group">
-                            <label>العدد (جرار)</label>
+                            <label>الكمية <span class="unit">(جرار)</span></label>
                             <input type="number" value="${item.quantity}" step="1" min="0"
-                                onchange="updateItem(${item.id}, 'quantity', this.value)">
+                                onchange="updateItem(${item.id}, 'quantity', this.value)" placeholder="أدخل الكمية">
                         </div>
                     </div>
                 </div>
@@ -500,8 +585,10 @@
             let totalTransport = 0;
             let totalClearance = 0;
             const itemResults = [];
+            const tableBody = document.getElementById('resultsTableBody');
+            let tableHTML = '';
             
-            items.forEach(item => {
+            items.forEach((item, index) => {
                 const weightInTons = (item.quantity * tractoWeight) / 1000;
                 const purchaseCost = item.price * weightInTons;
                 const transportCostItem = transportCost * weightInTons;
@@ -509,23 +596,42 @@
                 
                 // إجمالي التكلفة للطن (بعد كل المصروفات)
                 const costPerTonUSD = item.price + transportCost;
-                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + (totalAdditionalExpenses / Math.max(items.length, 1));
-                const totalItemCost = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + (totalAdditionalExpenses / Math.max(items.length, 1));
+                const expensePerTon = totalAdditionalExpenses / Math.max(items.length, 1);
+                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + expensePerTon;
+                const totalItemCost = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + expensePerTon;
                 
                 totalPurchase += purchaseCost;
                 totalTransport += transportCostItem;
                 totalClearance += clearanceCostItem;
                 
                 itemResults.push({
-                    name: item.name || `الصنف #${item.id}`,
+                    name: item.name || `الصنف #${index + 1}`,
+                    quantity: item.quantity,
                     weightInTons: weightInTons.toFixed(3),
+                    price: item.price.toFixed(2),
                     purchaseCost: purchaseCost.toFixed(2),
                     transportCostItem: transportCostItem.toFixed(2),
                     clearanceCostItem: clearanceCostItem.toFixed(0),
                     costPerTonEGP: costPerTonEGP.toFixed(2),
                     totalItem: totalItemCost.toFixed(2)
                 });
+                
+                tableHTML += `
+                    <tr>
+                        <td>${itemResults[index].name}</td>
+                        <td class="value">${item.quantity}</td>
+                        <td class="value">${itemResults[index].weightInTons}</td>
+                        <td class="value">$${itemResults[index].price}</td>
+                        <td class="value">$${itemResults[index].purchaseCost}</td>
+                        <td class="value">$${itemResults[index].transportCostItem}</td>
+                        <td class="value">ج.م ${itemResults[index].clearanceCostItem}</td>
+                        <td class="value" style="background: #f0f4ff; color: #667eea;">ج.م ${itemResults[index].costPerTonEGP}</td>
+                        <td class="total">ج.م ${itemResults[index].totalItem}</td>
+                    </tr>
+                `;
             });
+            
+            tableBody.innerHTML = tableHTML;
             
             const grandTotal = (totalPurchase + totalTransport) * dollarRate + totalClearance + totalAdditionalExpenses;
             
@@ -535,40 +641,6 @@
             document.getElementById('totalClearance').textContent = totalClearance.toFixed(0);
             document.getElementById('totalAdditionalExpenses').textContent = totalAdditionalExpenses.toFixed(2);
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
-            
-            // Update item results
-            const itemResultsDiv = document.getElementById('itemResults');
-            itemResultsDiv.innerHTML = itemResults.map((result, index) => `
-                <div class="item-result-card">
-                    <div class="item-result-title">📋 ${result.name}</div>
-                    <div class="item-result-grid">
-                        <div class="item-result-item">
-                            <div class="item-result-label">الوزن الإجمالي</div>
-                            <div class="item-result-value">${result.weightInTons} طن</div>
-                        </div>
-                        <div class="item-result-item">
-                            <div class="item-result-label">تكلفة الشراء (دولار)</div>
-                            <div class="item-result-value">$${result.purchaseCost}</div>
-                        </div>
-                        <div class="item-result-item">
-                            <div class="item-result-label">تكلفة النقل (دولار)</div>
-                            <div class="item-result-value">$${result.transportCostItem}</div>
-                        </div>
-                        <div class="item-result-item">
-                            <div class="item-result-label">التخليص الجمركي (جنيه)</div>
-                            <div class="item-result-value">ج.م ${result.clearanceCostItem}</div>
-                        </div>
-                        <div class="item-result-item total-per-ton">
-                            <div class="item-result-label">إجمالي التكلفة للطن (جنيه)</div>
-                            <div class="item-result-value">ج.م ${result.costPerTonEGP}</div>
-                        </div>
-                        <div class="item-result-item" style="border-right-color: #ff6b6b;">
-                            <div class="item-result-label">الإجمالي (جنيه)</div>
-                            <div class="item-result-value" style="color: #ff6b6b;">ج.م ${result.totalItem}</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
         }
         
         function exportToExcel() {
@@ -581,8 +653,8 @@
             const expense3 = parseFloat(document.getElementById('expense3').value) || 0;
             const totalAdditionalExpenses = expense1 + expense2 + expense3;
             
-            let csv = 'نظام حساب تكاليف الاستيراد\n\n';
-            csv += 'الإعدادات العامة\n';
+            let csv = '\uFEFFنظام حساب تكاليف الاستيراد\n\n';
+            csv += 'الإعدادات الأساسية\n';
             csv += `سعر الدولار (جنيه مصري),${dollarRate}\n`;
             csv += `تكلفة النقل لكل طن (دولار),${transportCost}\n`;
             csv += `التخليص الجمركي لكل طن (جنيه),${customsClearance}\n`;
@@ -595,7 +667,7 @@
             csv += `إجمالي المصروفات الإضافية,${totalAdditionalExpenses}\n\n`;
             
             csv += 'الأصناف المستوردة\n';
-            csv += 'اسم الصنف,السعر لكل طن (دولار),العدد (جرار),الوزن الإجمالي (طن),تكلفة الشراء (دولار),تكلفة النقل (دولار),التخليص الجمركي (جنيه),إجمالي التكلفة للطن (جنيه),الإجمالي (جنيه)\n';
+            csv += 'اسم الصنف,السعر لكل طن (دولار),الكمية (جرار),الوزن الإجمالي (طن),تكلفة الشراء (دولار),تكلفة النقل (دولار),التخليص الجمركي (جنيه),إجمالي التكلفة للطن (جنيه),الإجمالي (جنيه)\n';
             
             items.forEach(item => {
                 const weightInTons = (item.quantity * tractoWeight) / 1000;
@@ -603,8 +675,9 @@
                 const transportCostItem = transportCost * weightInTons;
                 const clearanceCostItem = customsClearance * weightInTons;
                 const costPerTonUSD = item.price + transportCost;
-                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + (totalAdditionalExpenses / Math.max(items.length, 1));
-                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + (totalAdditionalExpenses / Math.max(items.length, 1));
+                const expensePerTon = totalAdditionalExpenses / Math.max(items.length, 1);
+                const costPerTonEGP = (costPerTonUSD * dollarRate) + customsClearance + expensePerTon;
+                const totalItem = (purchaseCost + transportCostItem) * dollarRate + clearanceCostItem + expensePerTon;
                 
                 csv += `${item.name},${item.price},${item.quantity},${weightInTons.toFixed(3)},${purchaseCost.toFixed(2)},${transportCostItem.toFixed(2)},${clearanceCostItem.toFixed(0)},${costPerTonEGP.toFixed(2)},${totalItem.toFixed(2)}\n`;
             });
